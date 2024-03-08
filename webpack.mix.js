@@ -19,6 +19,7 @@ mix
       "./public/css/build/AdminLTE.css",
       "./node_modules/bootstrap-datepicker/dist/css/bootstrap-datepicker.standalone.css",
       "./node_modules/bootstrap-colorpicker/dist/css/bootstrap-colorpicker.css",
+      "./node_modules/eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker-standalone.css",
       "./node_modules/blueimp-file-upload/css/jquery.fileupload.css",
       "./node_modules/blueimp-file-upload/css/jquery.fileupload-ui.css",
       "./node_modules/ekko-lightbox/dist/ekko-lightbox.css",
@@ -26,6 +27,7 @@ mix
       "./public/css/build/app.css",
       "./node_modules/select2/dist/css/select2.css",
       "./public/css/build/overrides.css",
+      "./public/css/bootstrap-datetimepicker-standalone.css",
     ],
     "./public/css/dist/all.css"
   )
@@ -164,6 +166,8 @@ mix.combine(
     "./node_modules/blueimp-file-upload/js/jquery.fileupload.js",
     "./node_modules/bootstrap-colorpicker/dist/js/bootstrap-colorpicker.js",
     "./node_modules/bootstrap-datepicker/dist/js/bootstrap-datepicker.js",
+	"./node_modules/eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js",
+	"./public/js/bootstrap-datetimepicker.min.js",
     "./node_modules/ekko-lightbox/dist/ekko-lightbox.js",
     "./resources/assets/js/extensions/pGenerator.jquery.js",
     "./node_modules/chart.js/dist/Chart.js",

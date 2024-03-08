@@ -54,7 +54,7 @@ echo "- clear out old cache settings\n\n";
 
 
 // Fetching most current upgrade requirements from github. Read more here: https://github.com/snipe/snipe-it/pull/14127
-$remote_requirements_file = "https://raw.githubusercontent.com/snipe/snipe-it/$branch/.upgrade_requirements.json";
+$remote_requirements_file = "https://raw.githubusercontent.com/raindropmedia/snipe-it/$branch/.upgrade_requirements.json";
 $upgrade_requirements = json_decode(url_get_contents($remote_requirements_file), true);
 
 if (! $upgrade_requirements) {

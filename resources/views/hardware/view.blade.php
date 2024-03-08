@@ -689,7 +689,7 @@
                                                 </strong>
                                             </div>
                                             <div class="col-md-6">
-                                                {{ Helper::getFormattedDateObject($asset->expected_checkin, 'date', false) }}
+                                                {{ Helper::getFormattedDateObject($asset->expected_checkin, 'datetime', false) }}
                                             </div>
                                         </div>
                                     @endif
@@ -970,11 +970,11 @@
                                                 </li>
                                             @endif
                                                 <li>
-                                                    <i class="fas fa-calendar"></i> {{ trans('admin/hardware/form.checkout_date') }}: {{ Helper::getFormattedDateObject($asset->last_checkout, 'date', false) }}
+                                                    <i class="fas fa-calendar"></i> {{ trans('admin/hardware/form.checkout_date') }}: {{ Helper::getFormattedDateObject($asset->last_checkout, 'datetime', false) }}
                                                 </li>
                                             @if (isset($asset->expected_checkin))
                                                 <li>
-                                                    <i class="fas fa-calendar"></i> {{ trans('admin/hardware/form.expected_checkin') }}: {{ Helper::getFormattedDateObject($asset->expected_checkin, 'date', false) }}
+                                                    <i class="fas fa-calendar"></i> {{ trans('admin/hardware/form.expected_checkin') }}: {{ Helper::getFormattedDateObject($asset->expected_checkin, 'datetime', false) }}
                                                 </li>
                                             @endif
                                         </ul>

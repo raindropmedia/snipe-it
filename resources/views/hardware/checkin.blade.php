@@ -80,8 +80,8 @@
                       {{ Form::label('checkin_at', trans('admin/hardware/form.checkin_date'), array('class' => 'col-md-3 control-label')) }}
                       <div class="col-md-8">
                         <div class="input-group col-md-5 required">
-                          <div class="input-group date" data-provide="datepicker" data-date-format="yyyy-mm-dd"  data-autoclose="true">
-                            <input type="text" class="form-control" placeholder="{{ trans('general.select_date') }}" name="checkin_at" id="checkin_at" value="{{ old('checkin_at', date('Y-m-d')) }}">
+                          <div class="input-group date" data-provide="datetimepicker" data-date-format="yyyy-mm-dd hh:ii:ss"  data-autoclose="true">
+                            <input type="text" class="form-control" placeholder="{{ trans('general.select_date') }}" name="checkin_at" id="checkin_at" value="{{ old('checkin_at', date('Y-m-d H:i:s')) }}">
                             <span class="input-group-addon"><i class="fas fa-calendar" aria-hidden="true"></i></span>
                           </div>
                           {!! $errors->first('checkin_at', '<span class="alert-msg" aria-hidden="true"><i class="fas fa-times" aria-hidden="true"></i> :message</span>') !!}
@@ -111,6 +111,27 @@
 
       </div> <!--/.box.box-default-->
     </div>
-  </div>
+	  </div>
 
+@stop
+	  
+@section('moar_scripts')
+    @include('partials/assets-assigned')
+
+    <script>
+        //        $('#checkout_at').datepicker({
+        //            clearBtn: true,
+        //            todayHighlight: true,
+        //            endDate: '0d',
+        //            format: 'yyyy-mm-dd'
+        //        });
+		
+		$('#checkin_at').datetimepicker({
+          locale: 'pt', // Extract this from the language selection
+            maxDate: new Date(),  // today date
+         //   daysOfWeekDisabled: [0, 6],  // this should be set in the configuration 
+            format: 'YYYY-MM-DD HH:mm:ss'
+        });
+
+    </script>
 @stop

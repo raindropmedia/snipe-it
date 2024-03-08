@@ -38,6 +38,7 @@
         "bootstrap": "^3.4.1",
         "bootstrap-colorpicker": "^2.5.3",
         "bootstrap-datepicker": "^1.10.0",
+		"eonasdan-bootstrap-datetimepicker": "^4.17.47",
         "bootstrap-less": "^3.3.8",
         "bootstrap-table": "1.22.2",
         "chart.js": "^2.9.4",

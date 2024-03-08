@@ -31,6 +31,7 @@
 
     {{-- stylesheets --}}
     <link rel="stylesheet" href="{{ url(mix('css/dist/all.css')) }}">
+	<link rel="stylesheet" href="{{ url('css/bootstrap-datetimepicker-standalone.css') }}">
     @if (($snipeSettings) && ($snipeSettings->allow_user_skin==1) && Auth::check() && Auth::user()->present()->skin != '')
         <link rel="stylesheet" href="{{ url(mix('css/dist/skins/skin-'.Auth::user()->present()->skin.'.min.css')) }}">
     @else
@@ -947,6 +948,9 @@
 
         <!-- v5-beta: This pGenerator call must remain here for v5 - until fixed - so that the JS password generator works for the user create modal. -->
         <script src="{{ url('js/pGenerator.jquery.js') }}"></script>
+	
+		<script src="{{ url('js/moment.min.js') }}" nonce="{{ csrf_token() }}"></script>
+	    <script src="{{ url('js/bootstrap-datetimepicker.min.js') }}" nonce="{{ csrf_token() }}"></script>
 
         {{-- Page level javascript --}}
         @stack('js')

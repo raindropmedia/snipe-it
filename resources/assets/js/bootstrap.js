@@ -1,3 +1,6 @@
+global.moment = require('moment');
+require('eonasdan-bootstrap-datetimepicker');
+
 window._ = require('lodash');
 
 /**
