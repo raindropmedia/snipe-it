@@ -27,14 +27,28 @@ class RequestAssetNotification extends Notification
         $this->item_type = $params['item_type'];
         $this->item_quantity = $params['item_quantity'];
         $this->note = '';
+		$this->check_out = '';
+        $this->check_in = '';
+        $this->url_aproval = url('/invoice/');
         $this->last_checkout = '';
         $this->expected_checkin = '';
         $this->requested_date = Helper::getFormattedDateObject($params['requested_date'], 'datetime',
             false);
         $this->settings = Setting::getSettings();
+		
+		if (array_key_exists('destination', $params)) {
+            $this->destination = $params['destination'];
+            routeNotificationForMail($this->destination);
+        }
 
         if (array_key_exists('note', $params)) {
             $this->note = $params['note'];
+        }
+		if (array_key_exists('check_out', $params)) {
+            $this->check_out = $params['check_out'];
+        }
+        if (array_key_exists('check_in', $params)) {
+            $this->check_in = $params['check_in'];
         }
 
         if ($this->item->last_checkout) {
@@ -46,6 +60,18 @@ class RequestAssetNotification extends Notification
             $this->expected_checkin = Helper::getFormattedDateObject($this->item->expected_checkin, 'date',
                 false);
         }
+    }
+	
+	    /**
+     * Route notifications for the mail channel.
+     * GRIFU
+     * https://laravel.com/docs/5.7/notifications
+     * @param  \Illuminate\Notifications\Notification  $notification
+     * @return string
+     */
+    public function routeNotificationForMail($notification)
+    {
+        return $this->destination;
     }
 
     /**
@@ -73,6 +99,9 @@ class RequestAssetNotification extends Notification
         $qty = $this->item_quantity;
         $item = $this->item;
         $note = $this->note;
+		$fieldset = $this->fieldset;
+        $check_out = $this->check_out;
+        $check_in = $this->check_in;
         $botname = ($this->settings->webhook_botname) ? $this->settings->webhook_botname : 'Snipe-Bot';
         $channel = ($this->settings->webhook_channel) ? $this->settings->webhook_channel : '';
 
@@ -85,9 +114,11 @@ class RequestAssetNotification extends Notification
             ->content(trans('mail.Item_Requested'))
             ->from($botname)
             ->to($channel)
-            ->attachment(function ($attachment) use ($item, $note, $fields) {
+            ->attachment(function ($attachment) use ($item, $note, $fields, $check_in, $check_out) {
                 $attachment->title(htmlspecialchars_decode($item->present()->name), $item->present()->viewUrl())
                     ->fields($fields)
+					->content($check_in)
+                    ->content($check_out)
                     ->content($note);
             });
     }
@@ -115,6 +146,9 @@ class RequestAssetNotification extends Notification
                 'fields'        => $fields,
                 'last_checkout' => $this->last_checkout,
                 'expected_checkin'  => $this->expected_checkin,
+				'check_in'     => $this->check_in,
+                'check_out'     => $this->check_out,
+                'url_aproval'   => $this->url_aproval,
                 'intro_text'        => trans('mail.a_user_requested'),
                 'qty'           => $this->item_quantity,
             ])

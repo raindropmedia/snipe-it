@@ -50,8 +50,18 @@
 | **{{ $field->name }}** | {{ $item->{ $field->db_column_name() } }} |
 @endif
 @endforeach
+@if ($check_out)
+| **{{ trans('mail.checkout_request_date') }}** | {{ $check_out }} |
+@endif
+@if ($check_in)
+| **{{ trans('mail.checkin_date') }}** | {{ $check_in }} |
+@endif
 @if ($note)
 | **{{ trans('mail.additional_notes') }}** | {{ $note }} |
+@endif
+@if ($url_aproval)
+| **{{ trans('mail.url_aproval') }}** | ({{ route('users.show', $requested_by->id) }}) |
+
 @endif
 @endcomponent
 

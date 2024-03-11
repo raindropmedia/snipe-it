@@ -105,6 +105,19 @@ Route::group(
         Route::post('{assetId}/clone', 
             [AssetsController::class, 'postCreate']
         );
+		
+		//Emmerich
+		
+		Route::get('{assetId}/checkoutRequest/{requestId}',
+            [AssetCheckoutController::class, 'createRequest']
+        )->name('checkout/hardware');
+		
+		Route::post('{assetId}/checkoutRequest/{requestId}',
+            [AssetCheckoutController::class, 'store']
+        )->name('checkout/hardware');
+		
+		
+		//Emmerich
 
         Route::get('{assetId}/checkout',
             [AssetCheckoutController::class, 'create']

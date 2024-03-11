@@ -105,6 +105,7 @@
                                     'route' => ['account/request-item', $request->itemType(), $request->requestable->id, true, $request->requestingUser()->id],
                                     ]) }}
                                     <button class="btn btn-warning btn-sm" data-tooltip="true" title="{{ trans('general.cancel_request') }}">{{ trans('button.cancel') }}</button>
+									<button class="btn btn-success btn-sm" data-tooltip="true" title="{{ trans('general.accept_request') }}">{{ trans('button.accept') }}</button>
                                 {{ Form::close() }}
                             </td>
                             <td>

@@ -474,11 +474,10 @@
         if (value.assigned_to_self == true){
             return '<button class="btn btn-danger btn-sm disabled" data-tooltip="true" title="Cancel this item request">{{ trans('button.cancel') }}</button>';
         } else if (value.available_actions.cancel == true)  {
-            return '<form action="{{ config('app.url') }}/account/request-asset/'+ value.id + '" method="POST">@csrf<button class="btn btn-danger btn-sm" data-tooltip="true" title="Cancel this item request">{{ trans('button.cancel') }}</button></form>';
+            return '<form action="{{ config('app.url') }}/account/request-asset/'+ value.id + '" method="GET">@csrf<button class="btn btn-danger btn-sm" data-tooltip="true" title="{{ trans('general.user_cancel_tooltip') }}">{{ trans('button.cancel') }}</button></form>';
         } else if (value.available_actions.request == true)  {
-            return '<form action="{{ config('app.url') }}/account/request-asset/'+ value.id + '" method="POST">@csrf<button class="btn btn-primary btn-sm" data-tooltip="true" title="Request this item">{{ trans('button.request') }}</button></form>';
-        }
-
+			return '<form action="{{ config('app.url') }}/account/request-asset/'+ value.id + '" method="GET">@csrf<button class="btn btn-primary btn-sm" data-tooltip="true" title="{{ trans('general.user_request_tooltip') }}">{{ trans('button.request') }}</button></form>';
+        }   
     }
 
 

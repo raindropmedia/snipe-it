@@ -1,0 +1,33 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+
+/**
+ * Model for Asset Models. Asset Models contain higher level
+ * attributes that are common among the same type of asset.
+ *
+ * @version    v1.0
+ */
+class RequestedAsset extends Model
+{
+    protected $table = 'requested_assets';
+
+    public function checkoutRequests()
+    {
+        return $this->belongsTo('app\Models\CheckoutRequest','checkout_requests_id','id');
+    }
+
+
+    public function responsible()
+    {
+        return $this->belongsTo(User::class, 'responsible_id', 'id');
+    }
+
+
+    public function requestingResponsible()
+    {
+        return $this->responsible()->first();
+    }
+}

@@ -2,6 +2,10 @@
 
 namespace App\Models;
 
+use App\Models\CheckoutRequest;
+//use App\Models\CheckoutExtend; // Grifu Fev2021 building the extend model
+use App\Models\RequestedAsset;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 
 // $asset->requests
@@ -12,6 +16,12 @@ trait Requestable
     public function requests()
     {
         return $this->morphMany(CheckoutRequest::class, 'requestable');
+    }
+	
+	// GRIFU | Modification
+    public function assetRequests()
+    {
+        return $this->morphMany(RequestedAsset::class, 'checkout_requests');
     }
 
     public function isRequestedBy(User $user)

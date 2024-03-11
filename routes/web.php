@@ -291,16 +291,45 @@ Route::group(['prefix' => 'account', 'middleware' => ['auth']], function () {
 
     Route::get('requested', [ViewAssetsController::class, 'getRequestedAssets'])->name('account.requested');
 
+	
+	# Accept Asset
+    Route::get('accept-asset/{logID}', [ViewAssetsController::class, 'getAcceptAsset'])
+        ->name('account/accept-assets');
+
+    Route::post('accept-asset/{logID}', [ViewAssetsController::class, 'postAcceptAsset'])
+        ->name('account/asset-accepted');
+	
+   
     // Profile
     Route::get(
         'requestable-assets',
         [ViewAssetsController::class, 'getRequestableIndex']
     )->name('requestable-assets');
-    Route::post(
+	
+	// EMMERICH
+	
+    Route::get(
         'request-asset/{assetId}',
+        [ViewAssetsController::class, 'getRequestView']
+    )->name('requestout-asset');
+	
+	Route::post(
+        'requestout-asset/{assetId}',
         [ViewAssetsController::class, 'getRequestAsset']
-    )->name('account/request-asset');
+    )->name('account/requestout-asset');
+	
+	Route::get(
+        'aproverequest/{requestId}/{approval?}',
+        [ViewAssetsController::class, 'approveRequestAsset']
+    )->name('requests');
+	
+	Route::post(
+        'request/{itemType}/{itemId}',
+        [ViewAssetsController::class, 'getRequestItem']
+    )->name('account/request-item');
 
+	// EMMERICH
+	
     Route::post(
         'request/{itemType}/{itemId}/{cancel_by_admin?}/{requestingUser?}',
         [ViewAssetsController::class, 'getRequestItem']

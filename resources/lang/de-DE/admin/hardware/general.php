@@ -19,6 +19,7 @@ return [
     'model_invalid_fix'         => 'Das Asset sollte bearbeitet werden, um dies zu korrigieren, bevor versucht wird, es ein- oder auszuchecken.',
     'requestable'               => 'Anforderbar',
     'requested'				    => 'Angefordert',
+	'request'				    => 'Asset anfragen',
     'not_requestable'           => 'Kann nicht angefordert werden',
     'requestable_status_warning' => 'Wechsle nicht den Status "Anforderbar"',
     'restore'  					=> 'Asset wiederherstellen',

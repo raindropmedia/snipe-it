@@ -9,10 +9,14 @@ use App\Models\Company;
 use App\Models\Setting;
 use App\Models\User;
 use App\Models\CustomField;
+use App\Models\RequestedAsset;
 use App\Notifications\RequestAssetCancelation;
 use App\Notifications\RequestAssetNotification;
+use App\Notifications\RequestAssetApprovalNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Helpers\Helper;
+use DB;
 
 /**
  * This controller handles all actions related to the ability for users
@@ -147,6 +151,7 @@ class ViewAssetsController extends Controller
      */
     public function getRequestAsset($assetId = null)
     {
+		$requestedAsset = new RequestedAsset;
         $user = Auth::user();
 
         // Check if the asset exists and is requestable
@@ -158,11 +163,13 @@ class ViewAssetsController extends Controller
             return redirect()->route('requestable-assets')
                 ->with('error', trans('general.insufficient_permissions'));
         }
+		
 
         $data['item'] = $asset;
         $data['target'] = Auth::user();
         $data['item_quantity'] = 1;
         $settings = Setting::getSettings();
+		$data['note'] = e(Input::get('note'));
 
         $logaction = new Actionlog();
         $logaction->item_id = $data['asset_id'] = $asset->id;
@@ -186,17 +193,172 @@ class ViewAssetsController extends Controller
             return redirect()->route('requestable-assets')
                 ->with('success')->with('success', trans('admin/hardware/message.requests.canceled'));
         }
+		
+		// double check if the checkout date is outside of any other reservation
+        $requests =  DB::table('requested_assets')->where('asset_id',$assetId)->where('expected_checkout', '>=', date('Y-m-d'))->where('request_state', '<','2')->select('expected_checkout','expected_checkin')->get();
+ 
+        $datas = "";
+		
+		$checkOk = true;
+            foreach($requests as &$request)
+            {
+                $datetime = strtotime($request->expected_checkout);
+                $checkout = date('Y-m-d H',$datetime);
+                $datetime = strtotime($request->expected_checkin);
+                $checkin = date('Y-m-d H',$datetime);
+                $checkout_test = strtotime(e(Input::get('checkout_at')));
+                $checkout_now = date('Y-m-d H',$checkout_test);        
+            
+
+            if ($checkout_now >= $checkout && $checkout_now <= $checkin)
+                {
+                    // return redirect()->back() ->with('alert',$checkin);
+                        return redirect()->route('requestable-assets')
+                        ->with('error', trans('admin/hardware/message.dateOverlap'))->with('2');  
+                    }
+            } 
+		if (e(Input::get('checkout_at')) == null || e(Input::get('expected_checkin')) == null)
+        {
+            return redirect()->route('requestable-assets')
+            ->with('error', trans('admin/hardware/message.no_dates'));  
+        }
+
+        if (e(Input::get('checkout_at')) == (e(Input::get('expected_checkin'))))
+        {
+            return redirect()->route('requestable-assets')
+            ->with('error', trans('admin/hardware/message.equal_dates'));  
+
+        }
+		
+		$requestedAsset->asset_id = $asset->id;
+        $requestedAsset->checkout_requests_id = CheckoutRequest::all()->last()->id;
+        $requestedAsset->user_id = $data['user_id'] = Auth::user()->id;
+        $requestedAsset->notes = e(Input::get('note'));    
+        $requestedAsset->created_at = $data['requested_date'] = date("Y-m-d H:i:s");
+		$requestedAsset->expected_checkout =  e(Input::get('checkout_at'));
+        $requestedAsset->expected_checkin = e(Input::get('expected_checkin'));
+		
+		$requestedAsset->save();
+
 
         $logaction->logaction('requested');
-        $asset->request();
-        $asset->increment('requests_counter', 1);
-        $settings->notify(new RequestAssetNotification($data));
+        //$asset->request();
+        //$asset->increment('requests_counter', 1);
+        //$settings->notify(new RequestAssetNotification($data));
 
         return redirect()->route('requestable-assets')->with('success')->with('success', trans('admin/hardware/message.requests.success'));
     }
+	
+	
+	    public function getRequestView($assetId = null)
+    {
+        // Isto pode voltar para a outra função
+       // return view('hardware/requestout', compact('asset'));
+	   $settings = Setting::getSettings();
+       $logaction = new Actionlog();
+       $logaction->item_id = $data['asset_id'] = $assetId;
+       $logaction->item_type = $data['item_type'] = Asset::class;
+       $logaction->created_at = $data['requested_date'] = date("Y-m-d H:i:s");
+
+       $user = Auth::user();
+
+       // Check if the asset exists and is requestable
+       if (is_null($asset = Asset::RequestableAssets()->find($assetId))) {
+           return redirect()->route('requestable-assets')
+               ->with('error', trans('admin/hardware/message.does_not_exist_or_not_requestable'));
+       } elseif (!Company::isCurrentUserHasAccess($asset)) {
+           return redirect()->route('requestable-assets')
+               ->with('error', trans('general.insufficient_permissions'));
+       }
+
+       $data['item'] = $asset;
+       $data['target'] =  Auth::user();
+       $data['item_quantity'] = 1;
+       $settings = Setting::getSettings();
+
+       //return view('hardware/checkout', compact('asset'));
+			
+       //return view('hardware/requestout', compact('asset'));
+                //->with('statusLabel_list', Helper::deployableStatusLabelList());
+
+       //$logaction->logaction('requested');
+       //$asset->request();
+       //$asset->increment('requests_counter', 1);
+         //$settings->notify(new RequestAssetNotification($data));
+
+       //return $logaction->item_id;
+			
+		if ($asset->isRequestedBy(Auth::user())) {
+
+        $asset->cancelRequest();
+        $asset->decrement('requests_counter', 1);
+
+
+        // GRIFU | Modification. This function should be transposed to Requestable.php
+        $requestedAsset = new RequestedAsset;
+        $requestedAsset->where('checkout_requests_id',CheckoutRequest::all()->last()->id)->update(array('request_state' => '3'));
+
+        $logaction->logaction('request canceled');
+        $settings->notify(new RequestAssetCancelationNotification($data));
+        return redirect()->route('requestable-assets')
+            ->with('success')->with('success', trans('admin/hardware/message.requests.cancel-success'));
+
+    } else {
+        // GRIFU | Modification
+        // retrieve groups that are able to aprove reservations
+        // $search = '"assets.responsible":"1"';
+        // $userResponsibleGroup =  DB::table('groups')->where('permissions', 'LIKE', '%'.$search.'%')->pluck('id');
+        // Get User ID's
+        // $userResponsibleIDs =  DB::table('users_groups')->whereIn('group_id', $userResponsibleGroup)->pluck('user_id');
+
+        // Should not access directly to table, please change to model
+        // need to check if there is a inbetween reservation for today
+        $store =  DB::table('requested_assets')->where('asset_id',$assetId)->where('expected_checkin', '>=', date('Y-m-d'))->where('request_state', '<','2')->select('expected_checkout','expected_checkin')->get();
+
+
+        // Function to retrieve the allocated date and to add to the reservations preventing the reservation in a date that the object is allocated        
+        if ($asset->expected_checkin !=null) {
+
+            $expected = $asset->where('id',$assetId)->select('last_checkout','expected_checkin')->get();
+            $tmp = date($expected[0]->expected_checkin);
+            unset($expected[0]->expected_checkin);
+            $expected[0]->expected_checkout = date($expected[0]->last_checkout);
+            unset($expected[0]->last_checkout);
+            $expected[0]->expected_checkin = $tmp;
+
+            $store->push($expected[0]); // It adds to the vector the expected chekin date
+
+        }
+
+        // Send a list of responsible users and reservation dates to view requestout.blade
+        // return View::make('hardware/requestout', compact('asset'))->with('store', $store)->with('Responsibles', $userResponsibleIDs);
+        return view('hardware/requestout', compact('asset'))->with('store', $store);
+
+    }          
+
+    }
+
+    function extend($obj, $obj2) {
+        $vars = get_object_vars($obj2);
+        foreach ($vars as $var => $value) {
+            $obj->$var = $value;
+        }
+        return $obj;
+    }
+	
+	// Function to request approval
+// GRIFU | Modification
+	public function requestAssetApproval($requestId  = null)
+	{
+    	$requestedAsset = new RequestedAsset;
+    	$user = Auth::user();
+    	return 'request ID ='.$requestId;
+	}
 
     public function getRequestedAssets()
     {
         return view('account/requested');
     }
+	
+	
 }

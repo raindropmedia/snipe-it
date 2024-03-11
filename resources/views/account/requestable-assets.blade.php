@@ -119,7 +119,6 @@
                                         <th class="col-md-2 actions" data-sortable="false">{{ trans('table.actions') }}</th>
                                     </tr>
                                 </thead>
-
                                 <tbody>
                                     @foreach($models as $requestableModel)
                                         <tr>
@@ -149,7 +148,7 @@
                                                         {{ csrf_field() }}
                                                     <input type="text" style="width: 70px; margin-right: 10px;" class="form-control pull-left" name="request-quantity" value="" placeholder="{{ trans('general.qty') }}">
                                                     @if ($requestableModel->isRequestedBy(Auth::user()))
-                                                        {{ Form::submit(trans('button.cancel'), ['class' => 'btn btn-danger btn-sm'])}}
+                                                        {{ Form::submit(trans('button.cancel'), ['class' => 'btn btn-danger2 btn-sm'])}}
                                                     @else
                                                         {{ Form::submit(trans('button.request'), ['class' => 'btn btn-primary btn-sm'])}}
                                                     @endif

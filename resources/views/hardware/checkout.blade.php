@@ -175,17 +175,29 @@
         //            format: 'yyyy-mm-dd'
         //        });
 		
+		$.fn.datetimepicker.defaults.icons = {
+            time: 'fas fa-clock',
+            date: 'fas fa-calendar',
+            up: 'fas fa-chevron-up',
+            down: 'fas fa-chevron-down',
+            previous: 'fas fa-chevron-left',
+            next: 'fas fa-chevron-right',
+            today: 'fas fa-dot-circle-o',
+            clear: 'fas fa-trash',
+            close: 'fas fa-times'
+        };
+		
 		$('#checkout_at').datetimepicker({
-          locale: 'pt', // Extract this from the language selection
+          locale: 'de', // Extract this from the language selection
             maxDate: new Date(),  // today date
          //   daysOfWeekDisabled: [0, 6],  // this should be set in the configuration 
-            format: 'YYYY-MM-DD HH:mm:ss'
+            format: 'YYYY-MM-DD HH:mm'
         });
         $('#expected_checkin').datetimepicker({
-          locale: 'pt', // Extract this from the language selection
+          locale: 'de', // Extract this from the language selection
             minDate: new Date(),  // today date
          //   daysOfWeekDisabled: [0, 6],  // this should be set in the configuration 
-            format: 'YYYY-MM-DD HH:mm:ss'
+            format: 'YYYY-MM-DD HH:mm'
         });
 
 

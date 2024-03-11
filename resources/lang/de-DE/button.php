@@ -4,6 +4,7 @@ return [
     'actions' 	                => 'Aktionen',
     'add'    	                => 'Hinzufügen',
     'cancel'                    => 'Abbrechen',
+	'accept'                    => 'Akzeptieren',
     'checkin_and_delete'  	    => 'Alle einchecken / Benutzer löschen',
     'delete'  	                => 'Löschen',
     'edit'    	                => 'Bearbeiten',

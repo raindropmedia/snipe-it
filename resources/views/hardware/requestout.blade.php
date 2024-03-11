@@ -1,0 +1,180 @@
+@extends('layouts/default')
+
+{{-- Page title --}}
+@section('title')
+    {{ trans('admin/hardware/general.request') }}
+    @parent
+@stop
+
+{{-- Page content --}}
+@section('content')
+<style>
+		.bootstrap-datetimepicker-widget table td span.active {
+    background-color: #337ab7;
+    color: #ffffff;
+    text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+}
+#weeks {
+  width: 3em;
+}
+.bootstrap-datetimepicker-widget table td.disabled, .bootstrap-datetimepicker-widget table td.disabled:hover {
+            background: rgba(0, 0, 0, 0) !important;
+            color: #eeeeee;
+            cursor: not-allowed;
+}
+		
+        .input-group {
+            padding-left: 0px !important;
+        }
+    </style>
+<div class="row"> 
+  <!-- left column -->
+  <div class="col-md-7">
+    <div class="box box-default">
+      <form class="form-horizontal" method="post" action="{{ route('account/requestout-asset', ['assetId' => $asset->id])}}" autocomplete="off">
+        <div class="box-header with-border">
+          <h2 class="box-title"> {{ trans('admin/hardware/form.tag') }} {{ $asset->asset_tag }}</h2>
+        </div>
+        <div class="box-body"> {{csrf_field()}}
+          @if ($asset->company && $asset->company->name)
+          <div class="form-group"> {{ Form::label('model', trans('general.company'), array('class' => 'col-md-3 control-label')) }}
+            <div class="col-md-8">
+              <p class="form-control-static"> {{ $asset->company->name }} </p>
+            </div>
+          </div>
+          @endif 
+          <!-- AssetModel name -->
+          <div class="form-group"> {{ Form::label('model', trans('admin/hardware/form.model'), array('class' => 'col-md-3 control-label')) }}
+            <div class="col-md-8">
+              <p class="form-control-static"> @if (($asset->model) && ($asset->model->name))
+                {{ $asset->model->name }}
+                @else <span class="text-danger text-bold"> <i class="fas fa-exclamation-triangle"></i>{{ trans('admin/hardware/general.model_invalid')}} <a href="{{ route('hardware.edit', $asset->id) }}"></a> {{ trans('admin/hardware/general.model_invalid_fix')}}</span> @endif </p>
+            </div>
+          </div>
+          
+          <!-- Asset Name -->
+          <div class="form-group {{ $errors->has('name') ? 'error' : '' }}"> {{ Form::label('name', trans('admin/hardware/form.name'), array('class' => 'col-md-3 control-label')) }}
+            <div class="col-md-8">
+              <input class="form-control" type="text" name="name" id="name" value="{{ old('name', $asset->name) }}" tabindex="1">
+              {!! $errors->first('name', '<span class="alert-msg" aria-hidden="true"><i class="fas fa-times" aria-hidden="true"></i> :message</span>') !!} </div>
+          </div>
+          <input type="hidden" name="status_id" value="2">
+          @include ('partials.forms.checkout-selector', ['user_select' => 'true','asset_select' => 'false', 'location_select' => 'false'])
+          
+          @include ('partials.forms.edit.user-select', ['translated_name' => trans('general.user'), 'user_id' => $user->id, 'fieldname' => 'assigned_user', 'required'=>'false']) 
+          
+          <!-- We have to pass unselect here so that we don't default to the asset that's being checked out. We want that asset to be pre-selected everywhere else. --> 
+          @include ('partials.forms.edit.asset-select', ['translated_name' => trans('general.asset'), 'fieldname' => 'assigned_asset', 'unselect' => 'true', 'style' => 'display:none;', 'required'=>'true'])
+          
+          @include ('partials.forms.edit.location-select', ['translated_name' => trans('general.location'), 'fieldname' => 'assigned_location', 'style' => 'display:none;', 'required'=>'true']) 
+          
+          <!-- Checkout/Checkin Date -->
+          <div class="form-group {{ $errors->has('checkout_at') ? 'error' : '' }}"> {{ Form::label('checkout_at', trans('admin/hardware/form.checkout_date'), array('class' => 'col-md-3 control-label')) }}
+            <div class="col-md-8">
+              <div class="input-group date col-md-7" data-provide="datetimepicker" data-date-format="yyyy-mm-dd hh:ii" data-date-end-date="0d" data-date-clear-btn="true">
+                <input type="text" class="form-control" placeholder="{{ trans('general.select_date') }}" name="checkout_at" id="checkout_at" value="{{ old('checkout_at', date('Y-m-d H:i:s')) }}" required>
+                <span class="input-group-addon"><i class="fas fa-calendar" aria-hidden="true"></i></span> </div>
+              {!! $errors->first('checkout_at', '<span class="alert-msg" aria-hidden="true"><i class="fas fa-times" aria-hidden="true"></i> :message</span>') !!} </div>
+          </div>
+          
+          <!-- Expected Checkin Date -->
+          <div class="form-group {{ $errors->has('expected_checkin') ? 'error' : '' }}"> {{ Form::label('expected_checkin', trans('admin/hardware/form.expected_checkin'), array('class' => 'col-md-3 control-label')) }}
+            <div class="col-md-8">
+              <div class="input-group date col-md-7" data-provide="datetimepicker" data-date-format="yyyy-mm-dd hh:ii" data-date-start-date="0d" data-date-clear-btn="true">
+                <input type="text" class="form-control" placeholder="{{ trans('general.select_date') }}" name="expected_checkin" id="expected_checkin" value="{{ old('expected_checkin') }}" required>
+                <span class="input-group-addon"><i class="fas fa-calendar" aria-hidden="true"></i></span> </div>
+              {!! $errors->first('expected_checkin', '<span class="alert-msg" aria-hidden="true"><i class="fas fa-times" aria-hidden="true"></i> :message</span>') !!} </div>
+          </div>
+          
+          <!-- Note -->
+          <div class="form-group {{ $errors->has('note') ? 'error' : '' }}"> {{ Form::label('note', trans('admin/hardware/form.notes'), array('class' => 'col-md-3 control-label')) }}
+            <div class="col-md-8">
+              <textarea class="col-md-6 form-control" id="note" name="note">{{ old('note', $asset->note) }}</textarea>
+              {!! $errors->first('note', '<span class="alert-msg" aria-hidden="true"><i class="fas fa-times" aria-hidden="true"></i> :message</span>') !!} </div>
+          </div>
+          @if ($asset->requireAcceptance() || $asset->getEula() || ($snipeSettings->webhook_endpoint!=''))
+          <div class="form-group notification-callout">
+            <div class="col-md-8 col-md-offset-3">
+              <div class="callout callout-info"> @if ($asset->requireAcceptance()) <i class="far fa-envelope" aria-hidden="true"></i> {{ trans('admin/categories/general.required_acceptance') }} <br>
+                @endif
+                
+                @if ($asset->getEula()) <i class="far fa-envelope" aria-hidden="true"></i> {{ trans('admin/categories/general.required_eula') }} <br>
+                @endif
+                
+                @if ($snipeSettings->webhook_endpoint!='') <i class="fab fa-slack" aria-hidden="true"></i> {{ trans('general.webhook_msg_note') }}
+                @endif </div>
+            </div>
+          </div>
+          @endif </div>
+        <!--/.box-body-->
+        <div class="box-footer"> <a class="btn btn-link" href="{{ URL::previous() }}"> {{ trans('button.cancel') }}</a>
+          <button id="register" type="submit" class="btn btn-primary pull-right"><i class="fas fa-check icon-white" aria-hidden="true"></i> {{ trans('general.user_requests_count') }}</button>
+        </div>
+      </form>
+    </div>
+  </div>
+  <!--/.col-md-7--> 
+  
+  <!-- right column -->
+  <div class="col-md-5" id="current_assets_box" style="display:none;">
+    <div class="box box-primary">
+      <div class="box-header with-border">
+        <h2 class="box-title">{{ trans('admin/users/general.current_assets') }}</h2>
+      </div>
+      <div class="box-body">
+        <div id="current_assets_content"> </div>
+      </div>
+    </div>
+  </div>
+</div>
+@stop
+
+@section('moar_scripts')
+    @include('partials/assets-assigned') 
+<script>
+        //        $('#checkout_at').datepicker({
+        //            clearBtn: true,
+        //            todayHighlight: true,
+        //            endDate: '0d',
+        //            format: 'yyyy-mm-dd'
+        //        });
+		
+		$.fn.datetimepicker.defaults.icons = {
+            time: 'fas fa-clock',
+            date: 'fas fa-calendar',
+            up: 'fas fa-chevron-up',
+            down: 'fas fa-chevron-down',
+            previous: 'fas fa-chevron-left',
+            next: 'fas fa-chevron-right',
+            today: 'fas fa-dot-circle-o',
+            clear: 'fas fa-trash',
+            close: 'fas fa-times'
+        };
+		
+		var $start = $('#checkout_at');
+		
+		$(document).ready( update_assigned_assets_box({{ $user->id }}));
+		
+		$('#checkout_at').datetimepicker({
+          locale: 'de', // Extract this from the language selection
+            minDate: new Date(),  // today date
+         //   daysOfWeekDisabled: [0, 6],  // this should be set in the configuration 
+            format: 'YYYY-MM-DD HH:mm'
+        });
+        $('#expected_checkin').datetimepicker({
+			useCurrent: false, //Important! See issue #1075
+          locale: 'de', // Extract this from the language selection
+         //   daysOfWeekDisabled: [0, 6],  // this should be set in the configuration 
+            format: 'YYYY-MM-DD HH:mm'
+        });
+		
+		$("#checkout_at").on("dp.change", function (e) {
+           $('#expected_checkin').data("DateTimePicker").minDate(e.date);
+       });
+       $("#expected_checkin").on("dp.change", function (e) {
+           $('#checkout_at').data("DateTimePicker").maxDate(e.date);
+       });
+
+
+    </script> 
+@stop 
