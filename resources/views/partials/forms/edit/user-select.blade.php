@@ -6,7 +6,7 @@
 		
 		@if (!empty($user_id))
 		<input data-endpoint="users" type="hidden" name="assigned_user" id="assigned_user" value="{{ $user_id }}">
-		<input class="form-control" type="text" name="dummy" id="dummy" value="{{ (\App\Models\User::find($user_id)) ? \App\Models\User::find($user_id)->present()->fullName : '' }}" disabled tabindex="1">
+		<input class="form-control" type="text" name="dummy" id="dummy" value="{{ (\App\Models\User::find($user_id)) ? \App\Models\User::find($user_id)->present()->fullName : '' }}" disabled>
 		
 		@else
         <select class="js-data-ajax" data-endpoint="users" data-placeholder="{{ trans('general.select_user') }}" name="{{ $fieldname }}" style="width: 100%" id="assigned_user_select" aria-label="{{ $fieldname }}">

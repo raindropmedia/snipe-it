@@ -1,19 +1,19 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Assets;
 
 use App\Exceptions\CheckoutNotAllowed;
+use App\Helpers\Helper;
 use App\Http\Controllers\CheckInOutRequest;
+use App\Http\Controllers\Controller;
 use App\Http\Requests\AssetCheckoutRequest;
 use App\Models\Asset;
+use App\Models\RequestedAsset;
 use App\Models\Location;
 use App\Models\User;
-use App\Models\RequestedAsset;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Http\Request;
-use App\Helpers\Helper;
-use App\Http\Controllers\Controller;
+use DB;
 
 class AssetCheckoutController extends Controller
 {
@@ -36,28 +36,23 @@ class AssetCheckoutController extends Controller
         }
 
         $this->authorize('checkout', $asset);
-		
-		// Grifu | Modification. This should be called through model
-        $requests =  DB::table('requested_assets')->where('asset_id',$assetId)->where('expected_checkout', '>=', date('Y-m-d'))->where('request_state', '<','2')->select('expected_checkout','expected_checkin')->get();
 
         if ($asset->availableForCheckout()) {
-            return view('hardware/checkout', compact('asset'))->with('requests', $requests);    // Grifu | Modification. - Passing array with dates
-                //->with('statusLabel_list', Helper::deployableStatusLabelList());
+            return view('hardware/checkout', compact('asset'))
+                ->with('statusLabel_list', Helper::deployableStatusLabelList());
         }
 
         return redirect()->route('hardware.index')->with('error', trans('admin/hardware/message.checkout.not_available'));
     }
 	
-	
-	
-	    public function createRequest($assetId, $requestId)
+	public function createRequest($assetId, $requestId)
     {
 
         // GRIFU: This should be changed to access the database through model
         // we grab the data from the request sending the dates, the asset, and user-id
-
+        
         $requests =  DB::table('requested_assets')->where('id',$requestId)->select('expected_checkout','expected_checkin','request_state','user_id','asset_id','notes')->first();
-
+        
         // Have to filter the notes field to avoid problems. 
         $notes = filter_var($requests->notes, FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_HIGH | FILTER_FLAG_STRIP_LOW);
         unset($requests->notes);
@@ -71,12 +66,11 @@ class AssetCheckoutController extends Controller
 
         $this->authorize('checkout', $asset);
 
-
+        
         $extended = 0;  // this is just to ensure that we are not extending the checkout
 
         // passing User_id in a separate variable because the user_id inside $requests were returning a different value! Please verify this in the future 
         if ($asset->availableForCheckout()) {
-            //return view('hardware/checkout', compact('asset'));
             return view('hardware/checkoutRequest', compact('asset'))->with('requests', $requests)->with('extended',$extended)->with('userID',$requests->user_id)->with('notes',$notes);
         }
         return redirect()->route('hardware.index')->with('error', trans('admin/hardware/message.checkout.not_available'));
@@ -94,7 +88,7 @@ class AssetCheckoutController extends Controller
      * @return Redirect
      * @since [v1.0]
      */
-    public function store(AssetCheckoutRequest $request, $assetId, $requestId = 0)
+    public function store(AssetCheckoutRequest $request, $assetId)
     {
         try {
             // Check if the asset exists
@@ -143,9 +137,6 @@ class AssetCheckoutController extends Controller
             }
             
             if ($asset->checkOut($target, $admin, $checkout_at, $expected_checkin, $request->get('note'), $request->get('name'))) {
-				$requestedAsset = new RequestedAsset;
-                $requestedAsset->find($requestId);
-				$requestedAsset->where('id',$requestId)->update(array('request_state' => '4'));
                 return redirect()->route('hardware.index')->with('success', trans('admin/hardware/message.checkout.success'));
             }
 

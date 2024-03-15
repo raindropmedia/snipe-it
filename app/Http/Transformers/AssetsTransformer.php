@@ -229,7 +229,7 @@ class AssetsTransformer
             'model_number' => (($asset->model) && ($asset->model->model_number)) ? e($asset->model->model_number) : null,
             'expected_checkin' => Helper::getFormattedDateObject($asset->expected_checkin, 'datetime'),
             'location' => ($asset->location) ? e($asset->location->name) : null,
-            'status'=> ($asset->assetstatus) ? $asset->present()->statusMeta : null,
+            'status'=> ($asset->assetstatus) ? $asset->present()->statusText : null, //geändert auf statusText - war statusMeta
             'assigned_to_self' => ($asset->assigned_to == \Auth::user()->id),
         ];
 

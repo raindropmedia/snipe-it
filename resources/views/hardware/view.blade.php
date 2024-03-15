@@ -1,5 +1,12 @@
 @extends('layouts/default')
 
+
+@can('assets.checkout', App\Models\Post::class)
+{!! $userCheckout = '1' !!}
+@else
+ {!! $userCheckout = '0' !!}
+@endif
+
 {{-- Page title --}}
 @section('title')
     {{ trans('admin/hardware/general.view') }} {{ $asset->asset_tag }}
@@ -680,18 +687,29 @@
                                             </div>
                                         </div>
                                     @endif
-
+									@if( $userCheckout == 1)
                                     @if ($asset->expected_checkin!='')
                                         <div class="row">
                                             <div class="col-md-2">
                                                 <strong>
-                                                    {{ trans('admin/hardware/form.expected_checkin') }}
+                                                    {{ trans('admin/hardware/form.expected_checkin') }} 
                                                 </strong>
                                             </div>
                                             <div class="col-md-6">
                                                 {{ Helper::getFormattedDateObject($asset->expected_checkin, 'datetime', false) }}
+												<button type="submit" class="btn btn-success pull-right" onclick="window.location.href='{{ route('hardware.checkin.create', $asset->id) }}'">{{ trans('general.checkin') }}</button>
                                             </div>
+									@else
+											<div class="row">
+                                            <div class="col-md-2">
+                                            </div>
+                                            <div class="col-md-6">
+                                                <button type="submit" class="btn btn-success pull-right" onclick="window.location.href='{{ route('hardware.checkout.create', $asset->id) }}'">{{ trans('general.checkout') }}</button>
+                                            </div>
+                          					
+                      
                                         </div>
+									@endif
                                     @endif
 
                                     <div class="row">

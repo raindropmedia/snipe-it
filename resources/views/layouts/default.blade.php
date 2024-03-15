@@ -31,7 +31,7 @@
 
     {{-- stylesheets --}}
     <link rel="stylesheet" href="{{ url(mix('css/dist/all.css')) }}">
-	<link rel="stylesheet" href="{{ url('css/bootstrap-datetimepicker-standalone.css') }}">
+	<link rel="stylesheet" href="{{ url('css/bootstrap-datetimepicker.css') }}">
     @if (($snipeSettings) && ($snipeSettings->allow_user_skin==1) && Auth::check() && Auth::user()->present()->skin != '')
         <link rel="stylesheet" href="{{ url(mix('css/dist/skins/skin-'.Auth::user()->present()->skin.'.min.css')) }}">
     @else
@@ -485,14 +485,6 @@
                                             ({{ (isset($total_undeployable_sidebar)) ? $total_undeployable_sidebar : '' }})
                                         </a>
                                     </li>
-                                    <li{!! (Request::query('status') == 'byod' ? ' class="active"' : '') !!}><a
-                                                href="{{ url('hardware?status=byod') }}"><i
-                                                    class="fas fa-times text-red fa-fw"></i>
-                                            {{ trans('general.all') }}
-                                            {{ trans('general.byod') }}
-                                            ({{ (isset($total_byod_sidebar)) ? $total_byod_sidebar : '' }})
-                                        </a>
-                                    </li>
                                     <li{!! (Request::query('status') == 'Archived' ? ' class="active"' : '') !!}><a
                                                 href="{{ url('hardware?status=Archived') }}"><i
                                                     class="fas fa-times text-red fa-fw"></i>
@@ -782,6 +774,15 @@
                                 </a>
                             </li>
                         @endcan
+						            <!-- GRIFU | Modification : Special Button for the technical staff with managment priviliages -->
+            
+            <li{!! (Request::is('account/requestable-assets') ? ' class="active"' : '') !!}>
+            <a href="{{ route('assets.requested') }}">
+            <i class="fa fa-paperclip"></i>
+            <span>{{ trans('general.requested') }}</a></span>
+            </a>
+            </li>
+         
 
 
                     </ul>
@@ -949,8 +950,8 @@
         <!-- v5-beta: This pGenerator call must remain here for v5 - until fixed - so that the JS password generator works for the user create modal. -->
         <script src="{{ url('js/pGenerator.jquery.js') }}"></script>
 	
-		<script src="{{ url('js/moment.min.js') }}" nonce="{{ csrf_token() }}"></script>
-	    <script src="{{ url('js/bootstrap-datetimepicker.min.js') }}" nonce="{{ csrf_token() }}"></script>
+		<script src="{{ url('js/plugins/moment/moment-with-locales.min.js') }}" nonce="{{ csrf_token() }}"></script>
+	    <script src="{{ url('js/plugins/datetimepicker/bootstrap-datetimepicker.min.js') }}" nonce="{{ csrf_token() }}"></script>
 
         {{-- Page level javascript --}}
         @stack('js')

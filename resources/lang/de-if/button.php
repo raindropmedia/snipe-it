@@ -11,6 +11,7 @@ return [
     'restore' 	                => 'Wiederherstellen',
     'remove'                    => 'Entfernen',
     'request'                   => 'Anfrage',
+	'refuse'					=> 'Ablehnen',
     'submit'  	                => 'Abschicken',
     'upload'                    => 'Hochladen',
     'select_file'				=> 'Datei auswählen...',
@@ -22,4 +23,5 @@ return [
     'add_maintenance'           => 'Füge Wartung hinzu',
     'append'                    => 'Anhängen',
     'new'                       => 'Neu',
+	'u_cancel'                  => 'Stornieren',
 ];

@@ -12,6 +12,10 @@
 
 {{-- Page content --}}
 @section('content')
+BLUB
+{{ $assets->count() }}
+{{ $assets->requestingResponsible() }}
+BLUB
 <div class="row">
     <div class="col-md-12">
 

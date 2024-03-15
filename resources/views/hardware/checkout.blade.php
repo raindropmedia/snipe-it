@@ -10,6 +10,29 @@
 @section('content')
 
     <style>
+		.timepicker-picker > td.separator{
+		width: inherit;
+	}
+.bootstrap-datetimepicker-widget .separator::after, .separator::before{
+		border: none;
+	}
+.bootstrap-datetimepicker-widget table td{
+		width: inherit;
+	}
+.bootstrap-datetimepicker-widget td.active {
+    background-color: #337ab7;
+    color: #ffffff;
+    text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+}
+.bootstrap-datetimepicker-widget table td.disabled, .bootstrap-datetimepicker-widget table td.disabled:hover {
+            background: rgba(0, 0, 0, 0) !important;
+            color: #eeeeee;
+            cursor: not-allowed;
+}
+.bootstrap-datetimepicker-widget > div.row{
+		margin-left: 0px;
+		margin-right: 0px;
+}
 
         .input-group {
             padding-left: 0px !important;

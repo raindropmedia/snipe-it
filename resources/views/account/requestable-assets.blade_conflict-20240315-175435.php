@@ -10,6 +10,11 @@
     @yield('title0')  @parent
 @stop
 
+BLUB
+{{ $assets->count()}}
+{{ print_r($assets) }}
+BLUB
+
 {{-- Page content --}}
 @section('content')
 <div class="row">

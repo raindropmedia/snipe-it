@@ -48,11 +48,11 @@ trait Requestable
         $this->requests()->where('user_id', Auth::id())->delete();
     }
 
-    public function cancelRequest($user_id = null)
+    public function cancelRequest()
     {
-        if (!$user_id){
+        /*if (!$user_id){
             $user_id = Auth::id();
-        }
+        }*/
 
         $this->requests()->where('user_id', $user_id)->update(['canceled_at' => \Carbon\Carbon::now()]);
     }

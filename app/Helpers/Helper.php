@@ -1454,5 +1454,34 @@ class Helper
         }
         return $new_locale; // better that you have some weird locale that doesn't fit into our mappings anywhere than 'void'
     }
+	
+	public static function convertToMysqlDatetime($inputDate = null) {
+		// Zerlege das Eingabedatum in Datum und Uhrzeit
+		list($datePart, $timePart) = explode(' ', $inputDate);
+
+		// Zerlege das Datum in Tag, Monat und Jahr
+		list($day, $month, $year) = explode('.', $datePart);
+
+		// Zerlege die Uhrzeit in Stunden und Minuten
+		list($hours, $minutes) = explode(':', $timePart);
+
+		// Erstelle einen DateTime-Objekt mit den extrahierten Werten
+		$dateTime = new \DateTime();
+		$dateTime->setDate($year, $month, $day);
+		$dateTime->setTime($hours, $minutes);
+
+		// Konvertiere das DateTime-Objekt in das MySQL-Datumsformat
+		$mysqlDatetime = $dateTime->format('Y-m-d H:i:s');
+
+		return $mysqlDatetime;
+	}
+	public static function checkOverlap($start1,$end1,$start2,$end2) {
+    if ($start1 <= $end2 && $end1 >= $start2) {
+        // Wenn die Zeiträume sich überschneiden, gib die Anzahl der überlappenden Tage zurück
+        return min($end1, $end2)->diff(max($start2, $start1))->days + 1;
+    }
+    	// Wenn es keine Überschneidung gibt, gib 0 zurück
+    	return 0;
+	}
 
 }

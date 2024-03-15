@@ -1,7 +1,14 @@
 <?php
 
 return [
-
+    'a_user_approved' => 'Ihre Reservierung wurde genehmigt',
+	'a_user_rejected' => 'Ihre Reservierung wurde abgelehnt',
+	'accessory_name' => 'Name des Gegenstands:',
+    'additional_notes' => 'Zusätzliche Hinweise:',
+    'admin_has_created' => 'Ein Administrator hat für Sie ein Konto auf der :web erstellt.',
+    'asset' => 'Artigo:',
+    'responsible' => 'Verantwortlich:',
+	'url_aproval' => 'Verleih Bestätigen:',
     'Accessory_Checkin_Notification' => 'Zubehör zurückgenommen',
     'Accessory_Checkout_Notification' => 'Zubehör herausgegeben',
     'Asset_Checkin_Notification' => 'Asset zurückgenommen',
@@ -19,11 +26,12 @@ return [
     'Expected_Checkin_Report' => 'Bericht über erwartete Asset Rückgaben',
     'Expiring_Assets_Report' => 'Bericht über ablaufende Gegenstände.',
     'Expiring_Licenses_Report' => 'Bericht über ablaufende Lizenzen.',
-    'Item_Request_Canceled' => 'Gegenstands Anfrage abgebrochen',
+	'Item_Request_Rejected' => 'Verleih Anfrage abgelehnt',
+    'Item_Request_Canceled' => 'Verleih Anfrage abgebrochen',
+	'Item_Request_Approved' => 'Reservierung genehmigt',
     'Item_Requested' => 'Gegenstand angefordert',
     'License_Checkin_Notification' => 'Lizenz zurückgenommen',
     'License_Checkout_Notification' => 'Lizenz herausgegeben',
-    'Low_Inventory_Report' => 'Bericht über niedrige Lagerbestände',
     'a_user_canceled' => 'Eine Geräte-Anfrage auf der Webseite wurde vom Benutzer abgebrochen',
     'a_user_requested' => 'Ein Benutzer hat ein Gerät auf der Webseite angefordert',
     'acceptance_asset_accepted' => 'Ein Benutzer hat einen Gegenstand akzeptiert',
@@ -41,6 +49,7 @@ return [
     'canceled' => 'Abgebrochen:',
     'checkin_date' => 'Rücknahmedatum:',
     'checkout_date' => 'Herausgabedatum:',
+	'checkout_request_date' => 'Ausleihdatum:',
     'checkedout_from' => 'Herausgegeben von',
     'checkedin_from'  => 'Eingecheckt von',
     'checked_into' => 'Zurückgenommen in',

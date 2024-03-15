@@ -1052,6 +1052,7 @@ class AssetsController extends Controller
             'image',
             'purchase_cost',
             'expected_checkin',
+			'status_id',
         ];
 
         $all_custom_fields = CustomField::all(); //used as a 'cache' of custom fields throughout this page load

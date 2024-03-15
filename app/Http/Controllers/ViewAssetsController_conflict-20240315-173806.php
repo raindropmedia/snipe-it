@@ -86,8 +86,13 @@ class ViewAssetsController extends Controller
         //$assets = Asset::with('model', 'defaultLoc', 'location', 'assignedTo', 'requests')->Hardware()->RequestableAssets();
 		$assets = Asset::with('model', 'defaultLoc', 'location', 'assignedTo', 'requests')->Hardware()->RequestableAssets();
         $models = AssetModel::with('category', 'requests', 'assets')->RequestableModels()->get();
+		
+		echo $assets;
+		foreach($assets as $asset){
+			echo "Blub".$asset."<br>";
+		}
 
-        return view('account/requestable-assets', compact('assets', 'models'));
+        //return view('account/requestable-assets', compact('assets', 'models'));
     }
 
     public function getRequestItem(Request $request, $itemType, $itemId = null, $cancel_by_admin = false, $requestingUser = null)

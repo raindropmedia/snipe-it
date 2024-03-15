@@ -85,6 +85,8 @@ return [
         'error'   		=> 'Asset was not requested, please try again',
         'success' 		=> 'Asset requested successfully.',
         'canceled'      => 'Checkout request successfully canceled',
+		'warning' 		=> 'Asset requested was processed but it was incomplete (the notes should be filled indentifying the class and the project) .',
+		'incomplete'    => 'Some of the dates from the recurrent reservation were not processed due to some overlaping dates with other reservations.',
     ],
 
 ];

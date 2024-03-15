@@ -7,6 +7,15 @@ return [
     'does_not_exist' 	=> 'Asset existiert nicht.',
     'does_not_exist_or_not_requestable' => 'Dieses Asset existiert nicht oder kann nicht angefordert werden.',
     'assoc_users'	 	=> 'Dieses Asset ist im Moment an einen Benutzer herausgegeben und kann nicht entfernt werden. Bitte buchen sie das Asset wieder ein und versuchen Sie dann erneut es zu entfernen. ',
+	'no_dates'	        => 'Fehlendes Datum(checkin or checkout). Bei der Reservierung müssen beide Daten angegeben werden.',
+    'equal_dates'	    => 'Das Ausgabedatum muss unterschiedlich zum Rücknahmedatum sein.',
+	'dateOverlap'	    => 'Der Ausleihzeitraum überschneidet sich mit einer anderen Vermietung.',
+	'dateWrong'	    => 'Das Rückgabedatum kann nicht vor dem Ausleihdatum liegen.',
+	'no_requestID' 	    => 'Oops! The request ID does not exist, please contact the administrator.',
+	'no_responsible'	=> 'The reservation must have a responsible, please choose a person that will be the responsible for thre reservation.',
+    'canceled'	        => 'Nothing to aprove, the reservation was already canceled, or checked out.',
+    'isnot_responsible'	=> 'The user identifed as responsible does not have permissions as responsible, the reservation should be submited again with a valid responsible.',
+	
 
     'create' => [
         'error'   		=> 'Asset wurde nicht erstellt. Bitte versuchen Sie es erneut. :(',
@@ -84,7 +93,12 @@ return [
     'requests' => [
         'error'   		=> 'Das Asset wurde nicht angefordert, bitte versuchen Sie es erneut',
         'success' 		=> 'Gegenstand erfolgreich angefordert.',
+		'approved' 		=> 'Gegenstand erfolgreich bestätigt.',
+		'rejected' 		=> 'Anfrage wurde abgelehnt.',
+		'admin_canceled'=> 'Anfrage wurde abgebrochen.',
         'canceled'      => 'Herausgeben erfolgreich abgebrochen',
+		'warning' 		=> 'Asset requested was processed but it was incomplete (the notes should be filled indentifying the class and the project) .',
+		'incomplete'    => 'Some of the dates from the recurrent reservation were not processed due to some overlaping dates with other reservations.',
     ],
 
 ];

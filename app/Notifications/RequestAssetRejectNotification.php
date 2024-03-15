@@ -8,7 +8,7 @@ use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Messages\SlackMessage;
 use Illuminate\Notifications\Notification;
 
-class RequestAssetNotification extends Notification
+class RequestAssetRejectNotification extends Notification
 {
     /**
      * @var
@@ -39,10 +39,6 @@ class RequestAssetNotification extends Notification
 		if (array_key_exists('destination', $params)) {
             $this->destination = $params['destination'];
             routeNotificationForMail($this->destination);
-        }
-		
-		if (array_key_exists('request_id', $params)) {
-            $this->request_id = $params['request_id'];
         }
 
         if (array_key_exists('note', $params)) {
@@ -106,7 +102,6 @@ class RequestAssetNotification extends Notification
 		$fieldset = $this->fieldset;
         $check_out = $this->check_out;
         $check_in = $this->check_in;
-		$request_id = $this->request_id;
         $botname = ($this->settings->webhook_botname) ? $this->settings->webhook_botname : 'Snipe-Bot';
         $channel = ($this->settings->webhook_channel) ? $this->settings->webhook_channel : '';
 
@@ -119,12 +114,11 @@ class RequestAssetNotification extends Notification
             ->content(trans('mail.Item_Requested'))
             ->from($botname)
             ->to($channel)
-            ->attachment(function ($attachment) use ($item, $note, $fields, $request_id, $check_in, $check_out) {
+            ->attachment(function ($attachment) use ($item, $note, $fields, $check_in, $check_out) {
                 $attachment->title(htmlspecialchars_decode($item->present()->name), $item->present()->viewUrl())
                     ->fields($fields)
 					->content($check_in)
                     ->content($check_out)
-					->content($request_id)
                     ->content($note);
             });
     }
@@ -155,11 +149,10 @@ class RequestAssetNotification extends Notification
 				'check_in'     => $this->check_in,
                 'check_out'     => $this->check_out,
                 'url_aproval'   => $this->url_aproval,
-				'request_id'    => $this->request_id,
-                'intro_text'        => trans('mail.a_user_requested'),
+                'intro_text'        => trans('mail.a_user_rejected'),
                 'qty'           => $this->item_quantity,
             ])
-            ->subject(trans('mail.Item_Requested'));
+            ->subject(trans('mail.Item_Request_Rejected'));
 
         return $message;
     }

@@ -97,7 +97,19 @@ return [
             'note'       => 'Allows the user to mark an asset as physically inventoried.',
             'display'    => true,
         ],
-
+		
+		        /*
+        |--------------------------------------------------------------------------
+        | GRIFU | Modification. Add responsible to this.
+        |--------------------------------------------------------------------------
+        */
+		
+		[
+            'permission' => 'assets.responsible',
+            'label'      => 'Responsible ',
+            'note'       => 'The user is responsible for aprove reservations.',
+            'display'    => true,
+        ],
 
         [
             'permission' => 'assets.view.requestable',

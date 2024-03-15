@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Assets;
 use App\Helpers\Helper;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ImageUploadRequest;
+use App\Http\Requests\AssetCheckoutRequest;
+use App\Http\Requests\AssetRequest;
 use App\Models\Actionlog;
 use App\Models\Manufacturer;
 use Illuminate\Support\Facades\Log;
@@ -16,6 +18,7 @@ use App\Models\Location;
 use App\Models\Setting;
 use App\Models\Statuslabel;
 use App\Models\User;
+use App\Models\RequestedAsset;
 use Illuminate\Support\Facades\Auth;
 use App\View\Label;
 use Carbon\Carbon;
@@ -28,7 +31,6 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use League\Csv\Reader;
 use Illuminate\Support\Facades\Redirect;
-use App\Models\RequestedAsset;
 
 /**
  * This class controls all actions related to assets for
@@ -912,15 +914,28 @@ class AssetsController extends Controller
 
     public function getRequestedIndex($user_id = null)
     {
-        $this->authorize('index', Asset::class);
+		
+		// GRIFU | Modification.
+        // Call the request table view (requestedAssets.blade.php)
+        // Need to pass to the view (after $requests) the assigned_to from the assets table
+        // This can be done with a joint ->join('assets', 'id', '=', 'asset_id')
+        // At this moment, the view is processing all the data without any optimization such as (\App\Models\Asset::find($requests->asset_id)->assigned_to == null))
+        // this is wrong, and should be optimized. 
+		
+        //$this->authorize('index', Asset::class);
+		
         $requestedItems = CheckoutRequest::with('user', 'requestedItem')->whereNull('canceled_at')->with('user', 'requestedItem');
 
-        if ($user_id) {
-            $requestedItems->where('user_id', $user_id)->get();
-        }
+        //if ($user_id) {
+            //$requestedItems->where('user_id', $user_id)->get();
+        //}
 
-        $requestedItems = $requestedItems->orderBy('created_at', 'desc')->get();
+        //$requestedItems = $requestedItems->orderBy('created_at', 'desc')->get();
 
-        return view('hardware/requested', compact('requestedItems'));
+        //return view('hardware/requested', compact('requestedItems'));
+		
+		$requestedAssets =  RequestedAsset::orderBy('expected_checkout','desc')->where('request_state','<',2)->get();
+
+        return view('hardware/requestedAssets', compact('requestedAssets'));
     }
 }
