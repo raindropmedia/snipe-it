@@ -48,8 +48,18 @@ class BulkAssetsController extends Controller
         if (! $request->filled('ids')) {
             return redirect()->back()->with('error', trans('admin/hardware/message.update.no_assets_selected'));
         }
-
+		
         $asset_ids = $request->input('ids');
+		
+		foreach($asset_ids as $asset_id) {
+			$asset_ids_temp[$asset_id]=$asset_id;
+        }
+		unset($asset_ids);
+		$asset_ids = $asset_ids_temp;
+
+		
+		//echo '<pre>'; print_r($asset_ids); echo '</pre>';
+		
 
         // Figure out where we need to send the user after the update is complete, and store that in the session
         $bulk_back_url = request()->headers->get('referer');
@@ -92,8 +102,9 @@ class BulkAssetsController extends Controller
         $column_sort = in_array($sort_override, $allowed_columns) ? $sort_override : 'assets.id';
 
         $assets = Asset::with('assignedTo', 'location', 'model')->whereIn('assets.id', $asset_ids);
-
-        switch ($sort_override) {
+		
+		//Dekativiert da fehler bei der Label ausgabe ?? NOCH ZU KLÄREN !!
+        /*switch ($sort_override) {
             case 'model':
                 $assets->OrderModels($order);
                 break;
@@ -126,23 +137,24 @@ class BulkAssetsController extends Controller
             default:
                 $assets->orderBy($column_sort, $order);
                 break;
-        }
-
+        }*/
+		//echo '<pre>'; print_r($assets->get()); echo '</pre>';
         $assets = $assets->get();
+		
+		
 
         $models = $assets->unique('model_id');
         $modelNames = [];
         foreach($models as $model) {
             $modelNames[] = $model->model->name;
         }
-
+		
         if ($request->filled('bulk_actions')) {
 
 
             switch ($request->input('bulk_actions')) {
                 case 'labels':
                     $this->authorize('view', Asset::class);
-
                     return (new Label)
                         ->with('assets', $assets)
                         ->with('settings', Setting::getSettings())

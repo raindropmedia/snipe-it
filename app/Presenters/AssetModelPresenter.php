@@ -133,6 +133,15 @@ class AssetModelPresenter extends Presenter
                 'visible' => false,
                 'formatter' => 'notesFormatter',
             ],
+			[
+                'field' => 'manual',
+                'searchable' => false,
+                'sortable' => true,
+                'switchable' => true,
+                'title' => trans('general.user_manual'),
+                'visible' => true,
+				'formatter' => 'downloadFormatter',
+            ],
             [
                 'field' => 'created_at',
                 'searchable' => true,

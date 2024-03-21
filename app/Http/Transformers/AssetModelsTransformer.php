@@ -46,6 +46,7 @@ class AssetModelsTransformer
                 'name'=> e($assetmodel->manufacturer->name),
             ] : null,
             'image' => ($assetmodel->image != '') ? Storage::disk('public')->url('models/'.e($assetmodel->image)) : null,
+			'manual' => ($assetmodel->manual != '') ? Storage::disk('public')->url('models/'.e($assetmodel->manual)) : null,
             'model_number' => e($assetmodel->model_number),
             'min_amt'   => ($assetmodel->min_amt) ? (int) $assetmodel->min_amt : null,
             'depreciation' => ($assetmodel->depreciation) ? [

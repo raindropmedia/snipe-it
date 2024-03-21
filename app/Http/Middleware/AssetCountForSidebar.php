@@ -58,6 +58,20 @@ class AssetCountForSidebar
         } catch (\Exception $e) {
             \Log::debug($e);
         }
+		
+		try {
+            $total_company_1_sidebar = Asset::where('company_id', '=', '1')->count();
+            view()->share('total_company_1_sidebar', $total_company_1_sidebar);
+        } catch (\Exception $e) {
+            \Log::debug($e);
+        }
+		
+		try {
+            $total_company_3_sidebar = Asset::where('company_id', '=', '3')->count();
+            view()->share('total_company_3_sidebar', $total_company_3_sidebar);
+        } catch (\Exception $e) {
+            \Log::debug($e);
+        }
 
         return $next($request);
     }

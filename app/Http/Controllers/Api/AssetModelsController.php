@@ -36,6 +36,7 @@ class AssetModelsController extends Controller
             [
                 'id',
                 'image',
+				'manual',
                 'name',
                 'model_number',
                 'min_amt',
@@ -52,6 +53,7 @@ class AssetModelsController extends Controller
         $assetmodels = AssetModel::select([
             'models.id',
             'models.image',
+			'models.manual',
             'models.name',
             'model_number',
             'min_amt',
@@ -105,6 +107,7 @@ class AssetModelsController extends Controller
 
         $total = $assetmodels->count();
         $assetmodels = $assetmodels->skip($offset)->take($limit)->get();
+		
 
         return (new AssetModelsTransformer)->transformAssetModels($assetmodels, $total);
     }

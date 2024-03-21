@@ -41,6 +41,7 @@
 @include ('partials.forms.edit.notes')
 @include ('partials.forms.edit.requestable', ['requestable_text' => trans('admin/models/general.requestable')])
 @include ('partials.forms.edit.image-upload', ['image_path' => app('models_upload_path')])
+@include ('partials.forms.edit.manual-upload', ['manual_path' => app('models_upload_path')])
 
 
 @stop

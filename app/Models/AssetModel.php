@@ -63,6 +63,7 @@ class AssetModel extends SnipeModel
         'name',
         'notes',
         'user_id',
+        'manual',
     ];
 
     use Searchable;
@@ -175,6 +176,24 @@ class AssetModel extends SnipeModel
     {
         if ($this->image) {
             return Storage::disk('public')->url(app('models_upload_path').$this->image);
+        }
+
+        return false;
+    }
+	
+	/**
+     * Gets the full url for the manual
+     *
+     * @todo this should probably be moved
+     *
+     * @author [A. Gianotto] [<snipe@snipe.net>]
+     * @since [v2.0]
+     * @return \Illuminate\Database\Eloquent\Relations\Relation
+     */
+    public function getManualUrl()
+    {
+        if ($this->manual) {
+            return Storage::disk('public')->url(app('models_upload_path').$this->manual);
         }
 
         return false;

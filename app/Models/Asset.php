@@ -615,6 +615,25 @@ class Asset extends Depreciable
 
         return false;
     }
+	
+	/**
+     * Get the manual URL of the asset.
+     *
+     * Check first to see if there is a specific manual uploaded to the asset,
+     * and if not, check for an manual uploaded to the asset model.
+     *
+     * @author [A. Gianotto] [<snipe@snipe.net>]
+     * @since [v2.0]
+     * @return string | false
+     */
+    public function getManualUrl()
+    {
+        if ($this->model && ! empty($this->model->manual)) {
+            return Storage::disk('public')->url(app('models_upload_path').e($this->model->manual));
+        }
+
+        return false;
+    }
 
 
     /**

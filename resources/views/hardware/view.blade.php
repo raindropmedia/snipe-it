@@ -1,11 +1,10 @@
 @extends('layouts/default')
 
-
 @can('assets.checkout', App\Models\Post::class)
-{!! $userCheckout = '1' !!}
+	<?php $userCheckout = 1; ?>
 @else
- {!! $userCheckout = '0' !!}
-@endif
+    <?php $userCheckout = 0; ?>
+@endcan
 
 {{-- Page title --}}
 @section('title')
@@ -697,18 +696,31 @@
                                             </div>
                                             <div class="col-md-6">
                                                 {{ Helper::getFormattedDateObject($asset->expected_checkin, 'datetime', false) }}
-												<button type="submit" class="btn btn-success pull-right" onclick="window.location.href='{{ route('hardware.checkin.create', $asset->id) }}'">{{ trans('general.checkin') }}</button>
+												<button type="submit" class="btn btn-success" onclick="window.location.href='{{ route('hardware.checkin.create', $asset->id) }}'">{{ trans('general.checkin') }}</button>
                                             </div>
+											
+											
+									@elseif (($asset->assetstatus) && ($asset->assetstatus->deployable=='1'))	
+											<div class="row">
+                                            <div class="col-md-2">
+                                            </div>
+                                            <div class="col-md-6">
+                                                <button type="submit" class="btn btn-success" onclick="window.location.href='{{ route('hardware.checkout.create', $asset->id) }}'">{{ trans('general.checkout') }}</button>
+                                            </div>
+                          					
+                      
+                                        </div>
 									@else
 											<div class="row">
                                             <div class="col-md-2">
                                             </div>
                                             <div class="col-md-6">
-                                                <button type="submit" class="btn btn-success pull-right" onclick="window.location.href='{{ route('hardware.checkout.create', $asset->id) }}'">{{ trans('general.checkout') }}</button>
+                                                <button type="submit" class="btn btn-sm bg-purple" onclick="window.location.href='{{ route('hardware.checkin.create', $asset->id) }}'">{{ trans('general.checkin') }}</button>
                                             </div>
                           					
                       
                                         </div>
+											
 									@endif
                                     @endif
 
@@ -722,6 +734,22 @@
                                             {!! nl2br(Helper::parseEscapedMarkedownInline($asset->notes)) !!}
                                         </div>
                                     </div>
+												
+											
+									@if ($asset->model->manual!='')
+                                        <div class="row">
+                                            <div class="col-md-2">
+                                                <strong>
+                                                    {{ trans('general.user_manual') }}
+                                                </strong>
+                                            </div>
+                                            <div class="col-md-6">
+                                                        <a href="{{ ($asset->getManualUrl()) ? $asset->getManualUrl() : null }}" class="btn btn-sm btn-default" target="_blank">
+                                                            <i class="fa fa-download" aria-hidden="true"></i>
+                                                        </a>
+                                            </div>
+                                        </div>
+                                    @endif
 
                                     @if ($asset->location)
                                         <div class="row">

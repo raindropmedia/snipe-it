@@ -174,5 +174,78 @@ class ImageUploadRequest extends Request
 
         return $item;
     }
+	
+	public function handleManuals($item, $form_fieldname = 'manual', $path = null, $db_fieldname = 'manual')
+    {
+
+        $type = strtolower(class_basename(get_class($item)));
+
+        if (is_null($path)) {
+
+            $path = str_plural($type);
+
+            if ($type == 'assetmodel') {
+                $path = 'models';
+            }
+        }
+
+        if ($this->offsetGet($form_fieldname) instanceof UploadedFile) {
+           $manual = $this->offsetGet($form_fieldname);
+           \Log::debug('Image is an instance of UploadedFile');
+        } elseif ($this->hasFile($form_fieldname)) {
+            $manual = $this->file($form_fieldname);
+            \Log::debug('Just use regular upload for '.$form_fieldname);
+        } else {
+            \Log::debug('No manual found for form fieldname: '.$form_fieldname);
+        }
+
+        if (isset($manual)) {
+
+            if (!config('app.lock_passwords')) {
+
+                $ext = $manual->guessExtension();
+                $file_name = $type.'-'.$form_fieldname.'-'.$item->id.'-'.str_random(10).'.'.$ext;
+
+                \Log::info('File name will be: '.$file_name);
+                \Log::debug('File extension is: '.$ext);
+
+                    \Log::debug('Not an SVG or webp - resize');
+                    \Log::debug('Trying to upload to: '.$path.'/'.$file_name);
+
+
+                    // This requires a string instead of an object, so we use ($string)
+                    Storage::disk('public')->put($path.'/'.$file_name, file_get_contents($manual));
+
+                
+
+                 // Remove Current manual if exists
+                if (($item->{$form_fieldname}!='') && (Storage::disk('public')->exists($path.'/'.$item->{$db_fieldname}))) {
+                    \Log::debug('A file already exists that we are replacing - we should delete the old one.');
+                    try {
+                         Storage::disk('public')->delete($path.'/'.$item->{$form_fieldname});
+                         \Log::debug('Old file '.$path.'/'.$file_name.' has been deleted.');
+                    } catch (\Exception $e) {
+                        \Log::debug('Could not delete old file. '.$path.'/'.$file_name.' does not exist?');
+                    }
+                }
+
+                $item->{$db_fieldname} = $file_name;
+            }
+
+
+        // If the user isn't uploading anything new but wants to delete their old manual, do so
+        } elseif ($this->input('manual_delete') == '1') {
+            \Log::debug('Deleting manual');
+            try {
+                Storage::disk('public')->delete($path.'/'.$item->{$db_fieldname});
+                    $item->{$db_fieldname} = null;
+            } catch (\Exception $e) {
+                \Log::debug($e);
+            }
+
+        }
+
+        return $item;
+    }
     
 }

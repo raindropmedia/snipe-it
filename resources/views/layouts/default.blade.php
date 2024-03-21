@@ -440,6 +440,22 @@
                                             {{ trans('general.list_all') }}
                                         </a>
                                     </li>
+									<li{!! (Request::query('company_id') == '1' ? ' class="active"' : '') !!}>
+                                        <a href="{{ url('hardware?company_id=1') }}">
+                                            <i class="far fa-circle text-yellow fa-fw"></i>
+                                            {{ trans('general.all') }}
+                                            PuB Lager
+                                            ({{ (isset($total_company_1_sidebar)) ? $total_company_1_sidebar : '' }})
+                                        </a>
+                                    </li>
+									<li{!! (Request::query('company_id') == '3' ? ' class="active"' : '') !!}>
+                                        <a href="{{ url('hardware?company_id=3') }}">
+                                            <i class="far fa-circle text-red fa-fw"></i>
+                                            {{ trans('general.all') }}
+                                            HSD VT Lager
+                                            ({{ (isset($total_company_3_sidebar)) ? $total_company_3_sidebar : '' }})
+                                        </a>
+                                    </li>
 
                                     <?php $status_navs = \App\Models\Statuslabel::where('show_in_nav', '=', 1)->withCount('assets as asset_count')->get(); ?>
                                     @if (count($status_navs) > 0)

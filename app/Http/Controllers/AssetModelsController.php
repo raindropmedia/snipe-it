@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Helpers\Helper;
 use App\Http\Requests\ImageUploadRequest;
+use App\Http\Requests\ManualUploadRequest;
 use App\Models\Actionlog;
 use App\Models\Asset;
 use App\Models\AssetModel;
@@ -152,6 +153,7 @@ class AssetModelsController extends Controller
         }
 
         $model = $request->handleImages($model);
+		$model = $request->handleManuals($model);
 
         $model->depreciation_id = $request->input('depreciation_id');
         $model->eol = $request->input('eol');
