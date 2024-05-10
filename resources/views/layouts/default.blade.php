@@ -792,7 +792,7 @@
                         @endcan
 						            <!-- GRIFU | Modification : Special Button for the technical staff with managment priviliages -->
             
-            <li{!! (Request::is('account/requestable-assets') ? ' class="active"' : '') !!}>
+            <li{!! (Request::is('hardware/requested') ? ' class="active"' : '') !!}>
             <a href="{{ route('assets.requested') }}">
             <i class="fa fa-paperclip"></i>
             <span>{{ trans('general.requested') }}</a></span>

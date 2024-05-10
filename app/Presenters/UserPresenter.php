@@ -379,6 +379,16 @@ class UserPresenter extends Presenter
 
         return '';
     }
+	
+	// EMMERICH Add only eMail Adress return for PDF Export
+	public function emailOnly()
+    {
+        if ($this->email) {
+			return html_entity_decode($this->email, ENT_QUOTES | ENT_XML1, 'UTF-8');
+        }
+
+        return '';
+    }
 
     /**
      * Returns the user full name, it simply concatenates

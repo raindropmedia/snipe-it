@@ -698,7 +698,7 @@
                                                 {{ Helper::getFormattedDateObject($asset->expected_checkin, 'datetime', false) }}
 												<button type="submit" class="btn btn-success" onclick="window.location.href='{{ route('hardware.checkin.create', $asset->id) }}'">{{ trans('general.checkin') }}</button>
                                             </div>
-											
+										</div>	
 											
 									@elseif (($asset->assetstatus) && ($asset->assetstatus->deployable=='1'))	
 											<div class="row">
@@ -826,7 +826,6 @@
                                             </div>
                                         </div>
                                      @endif
-
 
 
                                     <div class="row">

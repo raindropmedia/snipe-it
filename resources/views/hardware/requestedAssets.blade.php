@@ -37,6 +37,8 @@
                     data-search="true"
                     data-show-columns="true"
                     data-show-export="true"
+				   	data-sort-order="desc"
+                	data-sort-name="requested_date"
                     data-pagination="true"
                     data-id-table="requestedAssets"
                     data-cookie-id-table="requestedAssets"
@@ -52,23 +54,12 @@
                         <th class="col-md-2">Verantwortlich</th>
                         <th class="col-md-3" data-sortable="true">Anforderer</th>
 						<th class="col-md-3" >Notiz</th>
-                        <th class="col-md-2" data-sortable="true">{{ trans('admin/hardware/table.requested_date') }}</th>
-                        <th class="col-md-2" data-sortable="true">{{ trans('admin/hardware/form.expected_checkin') }}</th>
+                        <th class="col-md-2" data-field="requested_date" data-sorter="dateTimeSorter" data-sortable="true">{{ trans('admin/hardware/table.requested_date') }}</th>
+                        <th class="col-md-2" data-sorter="dateTimeSorter" data-sortable="true">{{ trans('admin/hardware/form.expected_checkin') }}</th>
                         <th class="col-md-2">{{ trans('general.accept_decline') }}</th>
                         <th class="col-md-2">{{ trans('button.u_cancel') }}</th>
                         <th class="col-md-2">{{ trans('general.checkout') }}</th>
-                        <th class="col-md-1"></th>
-                        <th class="col-md-1"></th>
-						
-						
-                        <!--<th class="col-md-1">Image</th>
-                        <th class="col-md-2">Item Name</th>
-                        <th class="col-md-2" data-sortable="true">{{ trans('admin/hardware/table.location') }}</th>
-                        <th class="col-md-2" data-sortable="true">{{ trans('admin/hardware/form.expected_checkin') }}</th>
-                        <th class="col-md-3" data-sortable="true">{{ trans('admin/hardware/table.requesting_user') }}</th>
-                        <th class="col-md-2">{{ trans('admin/hardware/table.requested_date') }}</th>
-                        <th class="col-md-1">{{ trans('button.actions') }}</th>
-                        <th class="col-md-1">{{ trans('general.checkout') }}</th>-->
+						<th class="col-md-2">{{ trans('general.lend_agreement') }}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -121,9 +112,17 @@
 
                                         <!-- GRIFU | Modification. detected if it is not null -->
  
-                                            <td><a href="{{ url('/') }}/locations/{{ \App\Models\Asset::find($requests->asset_id)->location->id }}">
+                                            <td>
+												@if (\App\Models\Asset::find($requests->asset_id)->location != null)
+												<a href="{{ url('/') }}/locations/{{ \App\Models\Asset::find($requests->asset_id)->location->id }}">
                                                     {{ \App\Models\Asset::find($requests->asset_id)->location->name }}
-                                                </a></td>
+                                                </a>
+												@else
+													<a href="{{ url('/') }}/locations/{{ \App\Models\Asset::find($requests->asset_id)->rtd_location_id }}">
+                                                    Verliehen
+                                                </a>
+												@endif
+												</td>
 
 
 
@@ -155,9 +154,9 @@
                                            {{ $requests->notes}}
                                         </td>
 
-                                        <td>{{ App\Helpers\Helper::getFormattedDateObject($requests->expected_checkout, 'datetime', false) }}</td>
+                                        <td>{{ App\Helpers\Helper::getFormattedDateObject($requests->expected_checkout, 'date', false) }}</td>
 
-                                        <td>{{ App\Helpers\Helper::getFormattedDateObject($requests->expected_checkin, 'datetime', false) }}</td>
+                                        <td>{{ App\Helpers\Helper::getFormattedDateObject($requests->expected_checkin, 'date', false) }}</td>
 
 
                                         <td>
@@ -197,12 +196,15 @@
                                                     @if ($requests->request_state == 1)
 
                                                         @if (\App\Models\Asset::find($requests->asset_id)->assigned_to == null)
-                                                            <a href="{{ url('/') }}/hardware/{{ $requests->asset_id }}/checkoutRequest/{{ $requests->id }}" class="btn btn-sm bg-maroon" data-tooltip="true" title="Check this item out to a user">{{ trans('general.checkout') }}</a>
+                                                            <a href="{{ url('/') }}/hardware/{{ $requests->asset_id }}/checkoutRequest/{{ $requests->id }}" class="btn btn-sm bg-maroon" data-tooltip="true" title="{{ trans('general.checkout_user_tooltip') }}">{{ trans('general.checkout') }}</a>
                                                         @endif
                                                     @endif
                                                 @endif
                                             @endif
                                         </td>
+										<td>
+											<a href="{{ url('/') }}/hardware/{{ $requests->asset_id }}/lendagreement/{{ $requests->id }}" class="btn btn-sm btn-default" data-tooltip="true" title="{{ trans('general.lend_agreement') }}"><i class="fa fa-file-text fa-fw" aria-hidden="true"></i>{{ trans('general.lend_agreement') }}</a>			
+									</td>
 
 
                                 </tr>
@@ -238,7 +240,14 @@
         'clientSearch' => true,
     ])
 <script>
-	console.log($requestedAssets);
-</script> 
+	function dateTimeSorter(a, b) {
+    var aValue = moment(a, "DD-MM-YYYY H:m").format('YYYYMMDDHHmmss');
+    if (a === '' || a === null) { aValue = 0; }
 
+    var bValue = moment(b, "DD-MM-YYYY H:m").format('YYYYMMDDHHmmss');
+    if (b === '' || b === null) { bValue = 0; }
+
+    return aValue < bValue ? -1 : aValue > bValue ? 1 : 0;
+}
+</script>
 @stop

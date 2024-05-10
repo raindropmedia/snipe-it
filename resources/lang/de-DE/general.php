@@ -190,6 +190,7 @@ return [
     'logo_size'				=> 'Quadratische Logos sehen am besten aus, mit Logo + Text. Die maximale Logo-Größe beträgt 50px Höhe x 500px Breite.  ',
     'logout'				=> 'Abmelden',
     'lookup_by_tag'     => 'Nach Asset Tag suchen',
+	'lend_agreement'     => 'Leihschein',
     'maintenances'          => 'Wartungen',
     'manage_api_keys'       => 'API-Schlüssel verwalten',
     'manufacturer'			=> 'Hersteller',

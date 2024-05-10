@@ -31,6 +31,8 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use League\Csv\Reader;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Collection;
+use TCPDF;
 
 /**
  * This class controls all actions related to assets for
@@ -938,4 +940,81 @@ class AssetsController extends Controller
 
         return view('hardware/requestedAssets', compact('requestedAssets'));
     }
+	
+	public function lendagreement($assetId, $requestId)
+    {
+		
+		$this->authorize('index', Asset::class);
+		$requestedItem = CheckoutRequest::with('user', 'requestedItem')->whereNull('canceled_at')->with('user', 'requestedItem')->first();
+		$requestedAsset =  RequestedAsset::orderBy('expected_checkout','desc')->where('id',$requestId)->first();
+		
+		$assetData = new Collection();
+		
+		$asset = \App\Models\Asset::find($requestedAsset->asset_id);
+		$company = \App\Models\Company::find(\App\Models\Asset::find($requestedAsset->asset_id)->company_id);
+		
+		$assetData->put('asset', $asset);
+		$assetData->put('asset_id', $asset->id);
+        $assetData->put('asset_tag', $asset->asset_tag);
+		$assetData->put('asset_name', $asset->name);
+		//$order   = array("\r\n", "\n", "\r");
+		//$assetData->put('asset_snipeit_zubehar_2', str_replace($order, '</br>', $asset->_snipeit_zubehar_2));
+		$assetData->put('asset_snipeit_zubehar_2', $asset->_snipeit_zubehar_2);
+		$assetData->put('request_id', $requestId);
+		$assetData->put('company_name', data_get($asset, 'company.name'));
+		
+        if ($asset->company && $asset->company->image!='') {$logo = Storage::disk('public')->path('companies/'.e($asset->company->image));}
+		if (!empty($logo)) {$assetData->put('company_logo', $logo);}
+		$assetData->put('company_email', $asset->company->email);
+		
+		$assetData->put('contact_name', \App\Models\User::find($requestedAsset->user_id)->present()->fullName());
+		$assetData->put('contact_email', \App\Models\User::find($requestedAsset->user_id)->present()->emailOnly());
+		$assetData->put('contact_phone', \App\Models\User::find($requestedAsset->user_id)->phone);
+		$assetData->put('contact_notes', $requestedAsset->notes);
+		$assetData->put('requested_date', \App\Helpers\Helper::getFormattedDateObject($requestedAsset->created_at, 'datetime', false));
+		$assetData->put('expected_checkout', \App\Helpers\Helper::getFormattedDateObject($requestedAsset->expected_checkout, 'datetime', false));
+		$assetData->put('expected_checkin', \App\Helpers\Helper::getFormattedDateObject($requestedAsset->expected_checkin, 'datetime', false));
+		$assetData->put('today', date('d.m.Y'));
+		
+		
+		$assetData->put('manufacturer', data_get($asset, 'model.manufacturer.name'));
+		$assetData->put('location_name', $asset->location->name);
+		$assetData->put('location_address', $asset->location->address);
+		$barcode2DTarget = route('hardware.show', $asset->id);
+		
+		//echo "<pre>"; print_r($assetData);echo "<pre>"; 
+		//echo "<pre>"; print_r($requestedAsset);echo "<pre>"; 
+		
+		
+        //return view('hardware/lendagreement', compact('requestedAssets'));
+		$filename =  $asset->asset_tag.'_'.$requestId.'_Ausleihe.pdf';
+		
+        $html = view()->make('hardware/lendagreement', $assetData)->render();
+		
+        $pdf = new TCPDF;
+		// Reset parameters
+		$pdf->SetPrintHeader(false);
+        $pdf->SetPrintFooter(false);
+        $pdf->SetAutoPageBreak(false);
+        $pdf->SetMargins(10, 5, null, true);
+        $pdf->SetCellMargins(0, 1, 1, 0);
+        $pdf->SetCellPaddings(0, 1, 1, 0);
+        $pdf->setCreator('Snipe-IT');
+        $pdf->SetSubject('Ausleihschein');
+        $pdf->SetTitle('Ausleihschein');
+		
+        $pdf->AddPage();
+        $pdf->writeHTML($html, true, false, true, false, '');
+		if (!empty($barcode2DTarget)){
+        $pdf->write2DBarcode($barcode2DTarget, 'QRCODE,Q', 13, 15, 30, 30, null, ['stretch'=>true]);
+		}
+        $pdf->Output(public_path($filename), 'F');
+		
+        return response()->download(public_path($filename));
+		//echo $html;
+		//return response()->json(Helper::formatStandardApiResponse('success', $asset, trans('admin/asset_maintenances/message.create.success')));
+		//return (new AssetsTransformer)->transformAssets($asset, $asset->count());
+
+		
+	}
 }

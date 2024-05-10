@@ -134,6 +134,11 @@ Route::group(
         Route::post('{assetId}/checkin/{backto?}',
             [AssetCheckinController::class, 'store']
         )->name('hardware.checkin.store');
+		
+		 Route::get('{assetId}/lendagreement/{requestId}',
+            [AssetsController::class, 'lendagreement']
+        )->name('hardware.lendagreement');
+		
 
         // Redirect old legacy /asset_id/view urls to the resource route version
         Route::get('{assetId}/view', function ($assetId) {

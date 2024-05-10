@@ -71,7 +71,8 @@ class AssetCheckoutController extends Controller
 
         // passing User_id in a separate variable because the user_id inside $requests were returning a different value! Please verify this in the future 
         if ($asset->availableForCheckout()) {
-            return view('hardware/checkoutRequest', compact('asset'))->withInput($requests->input())->with('requests', $requests)->with('extended',$extended)->with('userID',$requests->user_id)->with('notes',$notes);
+            //return view('hardware/checkoutRequest', compact('asset'))->withInput($requests->input())->with('requests', $requests)->with('extended',$extended)->with('userID',$requests->user_id)->with('notes',$notes);
+			return view('hardware/checkoutRequest', compact('asset'))->with('requests', $requests)->with('extended',$extended)->with('userID',$requests->user_id)->with('notes',$notes);
         }
         return redirect()->route('hardware.index')->with('error', trans('admin/hardware/message.checkout.not_available'));
 
@@ -88,7 +89,7 @@ class AssetCheckoutController extends Controller
      * @return Redirect
      * @since [v1.0]
      */
-    public function store(AssetCheckoutRequest $request, $assetId)
+    public function store(AssetCheckoutRequest $request, $assetId, $requestId = 0)
     {
         try {
             // Check if the asset exists
@@ -135,8 +136,11 @@ class AssetCheckoutController extends Controller
                     return redirect()->to("hardware/$assetId/checkout")->with('error', trans('general.error_user_company'));
                 }
             }
-            
-            if ($asset->checkOut($target, $admin, $checkout_at, $expected_checkin, $request->get('note'), $request->get('name'))) {
+	
+			if ($asset->checkOut($target, $admin, $checkout_at, $expected_checkin, $request->get('note'), $request->get('name'))) {
+				$requestedAsset = new RequestedAsset;
+                $requestedAsset->find($requestId);
+				$requestedAsset->where('id',$requestId)->update(array('request_state' => '4'));
                 return redirect()->route('hardware.index')->with('success', trans('admin/hardware/message.checkout.success'));
             }
 
